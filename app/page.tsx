@@ -656,8 +656,8 @@ export default function Home() {
       </main>
       <footer className="bg-gray-900 text-white py-8">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 mb-8">
+            <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-2xl font-bold text-primary">Procount</span>
                 <span className="text-2xl font-bold">Solutions</span>

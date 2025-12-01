@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Calculator, Phone, Mail, MapPin } from "lucide-react"
+import { Calculator, Phone, Mail, MapPin, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -717,6 +717,22 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Fixed WhatsApp Button */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <a
+          href="https://wa.me/923042168188"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 flex items-center justify-center group"
+          aria-label="Contact us on WhatsApp"
+        >
+          <MessageCircle className="h-6 w-6" />
+          <span className="absolute right-full mr-3 bg-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            WhatsApp Us
+          </span>
+        </a>
+      </div>
     </div>
   )
 }

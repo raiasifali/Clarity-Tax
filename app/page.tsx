@@ -2,12 +2,11 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Calculator, Phone, Mail, MapPin, FileText } from "lucide-react"
+import { Calculator, Phone, Mail, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 
@@ -32,23 +31,25 @@ export default function Home() {
     breakdown: Array<{ bracket: string; amount: number; rate: number; tax: number }>
   } | null>(null)
 
-  // Pakistan Tax Rates 2025-2026
+  // Pakistan Tax Rates 2025-2026 (Finance Act 2025)
+  // Salary Income - Progressive Tax Structure
   const salaryTaxBrackets = [
-    { min: 0, max: 600000, rate: 0 },
-    { min: 600001, max: 1200000, rate: 0.01 },
-    { min: 1200001, max: 2200000, rate: 0.11 },
-    { min: 2200001, max: 3200000, rate: 0.23 },
-    { min: 3200001, max: 4100000, rate: 0.30 },
-    { min: 4100001, max: Infinity, rate: 0.35 }
+    { min: 0, max: 600000, baseTax: 0, rate: 0, description: "Up to Rs. 600,000" },
+    { min: 600001, max: 1200000, baseTax: 0, rate: 0.01, description: "Rs. 600,001 to Rs. 1,200,000" },
+    { min: 1200001, max: 2200000, baseTax: 6000, rate: 0.11, description: "Rs. 1,200,001 to Rs. 2,200,000" },
+    { min: 2200001, max: 3200000, baseTax: 116000, rate: 0.23, description: "Rs. 2,200,001 to Rs. 3,200,000" },
+    { min: 3200001, max: 4100000, baseTax: 345000, rate: 0.30, description: "Rs. 3,200,001 to Rs. 4,100,000" },
+    { min: 4100001, max: Infinity, baseTax: 615000, rate: 0.35, description: "Above Rs. 4,100,000" }
   ]
 
+  // Business Income - Progressive Tax Structure (estimated rates)
   const businessTaxBrackets = [
-    { min: 0, max: 600000, rate: 0 },
-    { min: 600001, max: 1200000, rate: 0.02 },
-    { min: 1200001, max: 2200000, rate: 0.22 },
-    { min: 2200001, max: 3200000, rate: 0.46 },
-    { min: 3200001, max: 4100000, rate: 0.60 },
-    { min: 4100001, max: Infinity, rate: 0.70 }
+    { min: 0, max: 600000, baseTax: 0, rate: 0, description: "Up to Rs. 600,000" },
+    { min: 600001, max: 1200000, baseTax: 0, rate: 0.02, description: "Rs. 600,001 to Rs. 1,200,000" },
+    { min: 1200001, max: 2200000, baseTax: 12000, rate: 0.22, description: "Rs. 1,200,001 to Rs. 2,200,000" },
+    { min: 2200001, max: 3200000, baseTax: 232000, rate: 0.46, description: "Rs. 2,200,001 to Rs. 3,200,000" },
+    { min: 3200001, max: 4100000, baseTax: 690000, rate: 0.60, description: "Rs. 3,200,001 to Rs. 4,100,000" },
+    { min: 4100001, max: Infinity, baseTax: 1230000, rate: 0.70, description: "Above Rs. 4,100,000" }
   ]
 
   const calculateTax = () => {
@@ -64,52 +65,61 @@ export default function Home() {
     const taxableIncome = Math.max(0, income - deductions)
     const brackets = taxCalculator.incomeType === "salary" ? salaryTaxBrackets : businessTaxBrackets
     
+    // Find the applicable bracket and calculate tax
     let totalTax = 0
-    const breakdown: Array<{ bracket: string; amount: number; rate: number; tax: number }> = []
-    let incomeProcessed = 0
+    let applicableBracket = brackets[0]
+    
+    for (let i = brackets.length - 1; i >= 0; i--) {
+      if (taxableIncome >= brackets[i].min) {
+        applicableBracket = brackets[i]
+        const excessAmount = taxableIncome - brackets[i].min
+        totalTax = brackets[i].baseTax + (excessAmount * brackets[i].rate)
+        break
+      }
+    }
 
+    // Build breakdown showing all brackets up to the applicable one
+    const breakdown: Array<{ bracket: string; amount: number; rate: number; tax: number }> = []
+    let previousBracketTax = 0
+    
     for (let i = 0; i < brackets.length; i++) {
       const bracket = brackets[i]
       
-      if (incomeProcessed >= taxableIncome) break
-      if (taxableIncome <= bracket.min) continue
-
-      // Calculate the amount in this bracket
-      const bracketStart = Math.max(bracket.min, incomeProcessed)
-      const bracketEnd = bracket.max === Infinity ? taxableIncome : Math.min(bracket.max, taxableIncome)
-      const amountInBracket = Math.max(0, bracketEnd - bracketStart)
+      if (taxableIncome <= bracket.min) break
+      
+      let amountInBracket = 0
+      let taxInBracket = 0
+      let currentBracketTax = 0
+      
+      if (taxableIncome >= bracket.max) {
+        // Full bracket
+        amountInBracket = bracket.max - bracket.min + 1
+        // Calculate total tax up to end of this bracket
+        const excessAmount = bracket.max - bracket.min
+        currentBracketTax = bracket.baseTax + (excessAmount * bracket.rate)
+        taxInBracket = currentBracketTax - previousBracketTax
+      } else {
+        // Partial bracket (last applicable bracket)
+        amountInBracket = taxableIncome - bracket.min + 1
+        const excessAmount = taxableIncome - bracket.min
+        currentBracketTax = bracket.baseTax + (excessAmount * bracket.rate)
+        taxInBracket = currentBracketTax - previousBracketTax
+      }
       
       if (amountInBracket > 0) {
-        const taxInBracket = amountInBracket * bracket.rate
-        totalTax += taxInBracket
-        
-        let bracketLabel = ""
-        if (bracket.min === 0) {
-          if (bracket.max >= 1000000) {
-            bracketLabel = `0 - ${(bracket.max / 1000000).toFixed(1)}M PKR`
-          } else {
-            bracketLabel = `0 - ${(bracket.max / 1000).toFixed(0)}K PKR`
-          }
-        } else if (bracket.max === Infinity) {
+        let bracketLabel = bracket.description
+        if (bracket.max === Infinity) {
           bracketLabel = `Above ${(bracket.min / 1000000).toFixed(1)}M PKR`
-        } else {
-          const minLabel = bracket.min >= 1000000 
-            ? `${(bracket.min / 1000000).toFixed(1)}M` 
-            : `${(bracket.min / 1000).toFixed(0)}K`
-          const maxLabel = bracket.max >= 1000000 
-            ? `${(bracket.max / 1000000).toFixed(1)}M` 
-            : `${(bracket.max / 1000).toFixed(0)}K`
-          bracketLabel = `${minLabel} - ${maxLabel} PKR`
         }
         
         breakdown.push({
           bracket: bracketLabel,
-          amount: amountInBracket,
+          amount: Math.round(amountInBracket),
           rate: bracket.rate * 100,
-          tax: taxInBracket
+          tax: Math.round(Math.max(0, taxInBracket))
         })
         
-        incomeProcessed = bracketEnd
+        previousBracketTax = currentBracketTax
       }
     }
 
@@ -120,11 +130,7 @@ export default function Home() {
       taxableIncome: Math.round(taxableIncome),
       taxAmount: finalTax,
       effectiveRate,
-      breakdown: breakdown.map(item => ({
-        ...item,
-        amount: Math.round(item.amount),
-        tax: Math.round(item.tax)
-      }))
+      breakdown: breakdown
     })
   }
 
@@ -150,9 +156,6 @@ export default function Home() {
             </Link>
             <Link href="#services" className="text-sm font-medium hover:text-primary">
               Services
-            </Link>
-            <Link href="#principles" className="text-sm font-medium hover:text-primary">
-              Principles
             </Link>
             <Link href="#calculator" className="text-sm font-medium hover:text-primary">
               Calculator
@@ -341,253 +344,150 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Principles of Our Work */}
-        <section id="principles" className="py-20">
-          <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Principles of Our Work</h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                These foundational values guide our approach to every client relationship and solution we provide.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Confidentiality & Integrity</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    We handle all client information with the utmost confidentiality and operate with complete honesty, transparency, and ethical standards.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Client-Centric Approach</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Our services are tailored to meet the unique needs of each client. We focus on delivering practical, results-driven solutions with personalized attention.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Long-Term Partnerships</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    We aim to build lasting relationships with our clients by providing consistent support, value, and trust over time.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Professionalism & Expertise</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Our team brings strong technical knowledge, industry expertise, and a commitment to staying updated with the latest accounting and tax regulations.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        {/* Tax Calculator & WHT Tax Card */}
+        {/* Tax Calculator */}
         <section id="calculator" className="py-20 bg-gray-50">
           <div className="container">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Tax Calculator & WHT Tax Card</h2>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Tax Calculator</h2>
               <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                Estimate your tax liability and access WHT tax card services with our easy-to-use tools.
+                Estimate your tax liability for tax year 2025-2026 using our easy-to-use calculator.
               </p>
             </div>
             <div className="max-w-4xl mx-auto">
-              <Tabs defaultValue="tax-calculator" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="tax-calculator">Tax Calculator</TabsTrigger>
-                  <TabsTrigger value="wht-card">WHT Tax Card</TabsTrigger>
-                </TabsList>
-                <TabsContent value="tax-calculator" className="p-6 bg-white rounded-lg shadow-sm mt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div>
-                        <label htmlFor="income-type" className="block text-sm font-medium mb-1">
-                          Income Type
-                        </label>
-                        <Select
-                          value={taxCalculator.incomeType}
-                          onValueChange={(value) => setTaxCalculator({ ...taxCalculator, incomeType: value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select income type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="salary">Salary Income</SelectItem>
-                            <SelectItem value="business">Business Income</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {taxCalculator.incomeType === "salary" 
-                            ? "Tax rates: 0% (up to 600k), 1% (600k-1.2M), 11% (1.2M-2.2M), 23% (2.2M-3.2M), 30% (3.2M-4.1M), 35% (above 4.1M)"
-                            : "Tax rates: 0% (up to 600k), 2% (600k-1.2M), 22% (1.2M-2.2M), 46% (2.2M-3.2M), 60% (3.2M-4.1M), 70% (above 4.1M)"}
-                        </p>
-                      </div>
-                      <div>
-                        <label htmlFor="annual-income" className="block text-sm font-medium mb-1">
-                          Annual Income (PKR)
-                        </label>
-                        <Input 
-                          id="annual-income" 
-                          type="number" 
-                          placeholder="Enter your annual income" 
-                          value={taxCalculator.annualIncome}
-                          onChange={(e) => setTaxCalculator({ ...taxCalculator, annualIncome: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="deductions" className="block text-sm font-medium mb-1">
-                          Total Deductions (PKR)
-                        </label>
-                        <Input 
-                          id="deductions" 
-                          type="number" 
-                          placeholder="Enter total deductions" 
-                          value={taxCalculator.deductions}
-                          onChange={(e) => setTaxCalculator({ ...taxCalculator, deductions: e.target.value })}
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="tax-credits" className="block text-sm font-medium mb-1">
-                          Tax Credits (PKR)
-                        </label>
-                        <Input 
-                          id="tax-credits" 
-                          type="number" 
-                          placeholder="Enter tax credits" 
-                          value={taxCalculator.taxCredits}
-                          onChange={(e) => setTaxCalculator({ ...taxCalculator, taxCredits: e.target.value })}
-                        />
-                      </div>
-                      <Button className="w-full mt-4" onClick={calculateTax}>
-                        <Calculator className="mr-2 h-4 w-4" /> Calculate Tax
-                      </Button>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      {taxResult ? (
-                        <div className="w-full bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-6 space-y-4">
-                          <div className="text-center border-b pb-4">
-                            <h3 className="text-lg font-semibold mb-2">Tax Calculation Results</h3>
-                            <p className="text-sm text-muted-foreground">Tax Year 2025-2026 ({taxCalculator.incomeType === "salary" ? "Salary" : "Business"} Income)</p>
-                          </div>
-                          <div className="space-y-3">
-                            <div className="flex justify-between">
-                              <span className="text-sm text-muted-foreground">Gross Income:</span>
-                              <span className="font-semibold">{parseFloat(taxCalculator.annualIncome || "0").toLocaleString('en-PK')} PKR</span>
-                            </div>
-                            {parseFloat(taxCalculator.deductions || "0") > 0 && (
-                              <div className="flex justify-between">
-                                <span className="text-sm text-muted-foreground">Deductions:</span>
-                                <span className="font-semibold text-green-600">-{parseFloat(taxCalculator.deductions || "0").toLocaleString('en-PK')} PKR</span>
-                              </div>
-                            )}
-                            <div className="flex justify-between border-t pt-2">
-                              <span className="text-sm font-medium">Taxable Income:</span>
-                              <span className="font-semibold">{taxResult.taxableIncome.toLocaleString('en-PK')} PKR</span>
-                            </div>
-                            <div className="flex justify-between text-lg font-bold border-t pt-2">
-                              <span>Total Tax:</span>
-                              <span className="text-primary">{taxResult.taxAmount.toLocaleString('en-PK')} PKR</span>
-                            </div>
-                            {parseFloat(taxCalculator.taxCredits || "0") > 0 && (
-                              <div className="flex justify-between text-sm">
-                                <span className="text-muted-foreground">Tax Credits Applied:</span>
-                                <span className="text-green-600">-{parseFloat(taxCalculator.taxCredits || "0").toLocaleString('en-PK')} PKR</span>
-                              </div>
-                            )}
-                            <div className="flex justify-between border-t pt-2">
-                              <span className="text-sm font-medium">Net Income After Tax:</span>
-                              <span className="font-bold text-green-600">{(parseFloat(taxCalculator.annualIncome || "0") - taxResult.taxAmount).toLocaleString('en-PK')} PKR</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-sm text-muted-foreground">Effective Tax Rate:</span>
-                              <span className="font-semibold">{taxResult.effectiveRate.toFixed(2)}%</span>
-                            </div>
-                            <div className="mt-4 pt-4 border-t">
-                              <p className="text-sm font-semibold mb-2">Tax Breakdown by Bracket:</p>
-                              <div className="space-y-2 max-h-48 overflow-y-auto">
-                                {taxResult.breakdown.map((item, index) => (
-                                  <div key={index} className="text-xs bg-white/50 p-2 rounded">
-                                    <div className="flex justify-between">
-                                      <span className="font-medium">{item.bracket}</span>
-                                      <span>{item.rate}%</span>
-                                    </div>
-                                    <div className="flex justify-between text-muted-foreground mt-1">
-                                      <span>Amount: {item.amount.toLocaleString('en-PK')} PKR</span>
-                                      <span>Tax: {item.tax.toLocaleString('en-PK')} PKR</span>
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <p className="text-muted-foreground text-center px-4">
-                            Enter your income details and click "Calculate Tax" to see results
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="wht-card" className="p-6 bg-white rounded-lg shadow-sm mt-4">
-                  <div className="space-y-6">
+              <div className="p-6 bg-white rounded-lg shadow-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
                     <div>
-                      <h3 className="text-xl font-semibold mb-4">Withholding Tax (WHT) Card Services</h3>
-                      <p className="text-muted-foreground mb-4">
-                        We provide comprehensive WHT tax card services including registration, renewal, and compliance support.
+                      <label htmlFor="income-type" className="block text-sm font-medium mb-1">
+                        Income Type
+                      </label>
+                      <Select
+                        value={taxCalculator.incomeType}
+                        onValueChange={(value) => setTaxCalculator({ ...taxCalculator, incomeType: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select income type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="salary">Salary Income</SelectItem>
+                          <SelectItem value="business">Business Income</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {taxCalculator.incomeType === "salary" 
+                          ? "Tax rates: 0% (up to 600k), 1% (600k-1.2M), 11% (1.2M-2.2M), 23% (2.2M-3.2M), 30% (3.2M-4.1M), 35% (above 4.1M)"
+                          : "Tax rates: 0% (up to 600k), 2% (600k-1.2M), 22% (1.2M-2.2M), 46% (2.2M-3.2M), 60% (3.2M-4.1M), 70% (above 4.1M)"}
                       </p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg">WHT Registration</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground">
-                            Complete WHT card registration services for individuals and businesses.
-                          </p>
-                        </CardContent>
-                        <CardFooter>
-                          <Button variant="outline" className="w-full">Learn More</Button>
-                        </CardFooter>
-                      </Card>
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="text-lg">WHT Renewal</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-sm text-muted-foreground">
-                            Timely renewal services to ensure continuous compliance with tax regulations.
-                          </p>
-                        </CardContent>
-                        <CardFooter>
-                          <Button variant="outline" className="w-full">Learn More</Button>
-                        </CardFooter>
-                      </Card>
+                    <div>
+                      <label htmlFor="annual-income" className="block text-sm font-medium mb-1">
+                        Annual Income (PKR)
+                      </label>
+                      <Input 
+                        id="annual-income" 
+                        type="number" 
+                        placeholder="Enter your annual income" 
+                        value={taxCalculator.annualIncome}
+                        onChange={(e) => setTaxCalculator({ ...taxCalculator, annualIncome: e.target.value })}
+                      />
                     </div>
-                    <div className="mt-6">
-                      <Button className="w-full" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
-                        <FileText className="mr-2 h-4 w-4" /> Request WHT Card Service
-                      </Button>
+                    <div>
+                      <label htmlFor="deductions" className="block text-sm font-medium mb-1">
+                        Total Deductions (PKR)
+                      </label>
+                      <Input 
+                        id="deductions" 
+                        type="number" 
+                        placeholder="Enter total deductions" 
+                        value={taxCalculator.deductions}
+                        onChange={(e) => setTaxCalculator({ ...taxCalculator, deductions: e.target.value })}
+                      />
                     </div>
+                    <div>
+                      <label htmlFor="tax-credits" className="block text-sm font-medium mb-1">
+                        Tax Credits (PKR)
+                      </label>
+                      <Input 
+                        id="tax-credits" 
+                        type="number" 
+                        placeholder="Enter tax credits" 
+                        value={taxCalculator.taxCredits}
+                        onChange={(e) => setTaxCalculator({ ...taxCalculator, taxCredits: e.target.value })}
+                      />
+                    </div>
+                    <Button className="w-full mt-4" onClick={calculateTax}>
+                      <Calculator className="mr-2 h-4 w-4" /> Calculate Tax
+                    </Button>
                   </div>
-                </TabsContent>
-              </Tabs>
+                  <div className="flex items-center justify-center">
+                    {taxResult ? (
+                      <div className="w-full bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-6 space-y-4">
+                        <div className="text-center border-b pb-4">
+                          <h3 className="text-lg font-semibold mb-2">Tax Calculation Results</h3>
+                          <p className="text-sm text-muted-foreground">Tax Year 2025-2026 ({taxCalculator.incomeType === "salary" ? "Salary" : "Business"} Income)</p>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="flex justify-between">
+                            <span className="text-sm text-muted-foreground">Gross Income:</span>
+                            <span className="font-semibold">{parseFloat(taxCalculator.annualIncome || "0").toLocaleString('en-PK')} PKR</span>
+                          </div>
+                          {parseFloat(taxCalculator.deductions || "0") > 0 && (
+                            <div className="flex justify-between">
+                              <span className="text-sm text-muted-foreground">Deductions:</span>
+                              <span className="font-semibold text-green-600">-{parseFloat(taxCalculator.deductions || "0").toLocaleString('en-PK')} PKR</span>
+                            </div>
+                          )}
+                          <div className="flex justify-between border-t pt-2">
+                            <span className="text-sm font-medium">Taxable Income:</span>
+                            <span className="font-semibold">{taxResult.taxableIncome.toLocaleString('en-PK')} PKR</span>
+                          </div>
+                          <div className="flex justify-between text-lg font-bold border-t pt-2">
+                            <span>Total Tax:</span>
+                            <span className="text-primary">{taxResult.taxAmount.toLocaleString('en-PK')} PKR</span>
+                          </div>
+                          {parseFloat(taxCalculator.taxCredits || "0") > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-muted-foreground">Tax Credits Applied:</span>
+                              <span className="text-green-600">-{parseFloat(taxCalculator.taxCredits || "0").toLocaleString('en-PK')} PKR</span>
+                            </div>
+                          )}
+                          <div className="flex justify-between border-t pt-2">
+                            <span className="text-sm font-medium">Net Income After Tax:</span>
+                            <span className="font-bold text-green-600">{(parseFloat(taxCalculator.annualIncome || "0") - taxResult.taxAmount).toLocaleString('en-PK')} PKR</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-sm text-muted-foreground">Effective Tax Rate:</span>
+                            <span className="font-semibold">{taxResult.effectiveRate.toFixed(2)}%</span>
+                          </div>
+                          <div className="mt-4 pt-4 border-t">
+                            <p className="text-sm font-semibold mb-2">Tax Breakdown by Bracket:</p>
+                            <div className="space-y-2 max-h-48 overflow-y-auto">
+                              {taxResult.breakdown.map((item, index) => (
+                                <div key={index} className="text-xs bg-white/50 p-2 rounded">
+                                  <div className="flex justify-between">
+                                    <span className="font-medium">{item.bracket}</span>
+                                    <span>{item.rate}%</span>
+                                  </div>
+                                  <div className="flex justify-between text-muted-foreground mt-1">
+                                    <span>Amount: {item.amount.toLocaleString('en-PK')} PKR</span>
+                                    <span>Tax: {item.tax.toLocaleString('en-PK')} PKR</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <p className="text-muted-foreground text-center px-4">
+                          Enter your income details and click "Calculate Tax" to see results
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -687,167 +587,6 @@ export default function Home() {
                   className="object-cover"
                 />
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Our Services - Detailed */}
-        <section className="py-20">
-          <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Services</h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                Comprehensive services tailored for Pakistan, Gulf Region, and Europe.
-              </p>
-            </div>
-            <div className="space-y-12">
-              <div>
-                <h3 className="text-2xl font-bold mb-6">Pakistan-Based Services</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Compliance & Registration</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2 text-sm">
-                        <li>• Company registration and incorporation in Pakistan</li>
-                        <li>• Trademark and copyright registration</li>
-                        <li>• EOBI, Social Security, and Provident Fund registration</li>
-                        <li>• PSEB, P@SHA and LCCI registrations</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Taxation & Compliance</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2 text-sm">
-                        <li>• FBR NTN registration for individuals and businesses</li>
-                        <li>• Income tax return filing for individuals and companies</li>
-                        <li>• Sales tax registration and compliance</li>
-                        <li>• Strategic tax planning and advisory</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Accounting & Reporting</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2 text-sm">
-                        <li>• Complete accounting and bookkeeping services</li>
-                        <li>• Financial statement preparation</li>
-                        <li>• Monthly, quarterly, and annual reporting</li>
-                        <li>• Using leading cloud-based software: Zoho Books, Sage, and QuickBooks</li>
-                        <li>• Real-time financial insights for better business decisions</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Business Planning</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2 text-sm">
-                        <li>• Business Plan and feasibility Report</li>
-                        <li>• Forecasting and projection</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold mb-6">Gulf Region Services (UAE, Saudi Arabia, Bahrain)</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Remote Services</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2 text-sm">
-                        <li>• Remote bookkeeping services</li>
-                        <li>• VAT return filing and compliance</li>
-                        <li>• Corporate annual return preparation and submission</li>
-                        <li>• Business Plan and feasibility Report</li>
-                        <li>• Forecasting and projection</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold mb-6">Europe-Focused Services</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>European Client Services</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ul className="space-y-2 text-sm">
-                        <li>• Dedicated bookkeeping services for European clients</li>
-                        <li>• Cloud-based accounting using QuickBooks</li>
-                        <li>• Monthly financial reports, bank reconciliations, and ledger maintenance</li>
-                        <li>• Cost-effective outsourcing with a focus on accuracy and confidentiality</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Why Choose Us */}
-        <section className="py-20 bg-gray-50">
-          <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Why Choose Us?</h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                We deliver exceptional value through expertise, technology, and personalized service.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Certified Professionals</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Certified professionals with regional and international experience in accounting, taxation, and business advisory.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Cloud-Based Solutions</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Secure and remote-friendly cloud accounting solutions using Zoho Books, Sage, and QuickBooks for seamless collaboration.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Personalized Support</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Personalized support with a long-term partnership mindset, ensuring your business receives dedicated attention and care.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Transparent Pricing</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Transparent pricing and timely delivery, ensuring you know exactly what you're paying for and when to expect results.
-                  </p>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </section>

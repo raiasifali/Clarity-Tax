@@ -1,47 +1,60 @@
+"use client"
+
 import Image from "next/image"
 import Link from "next/link"
-import { Calculator } from "lucide-react"
+import { Calculator, Phone, Mail, MapPin, FileText } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from "react"
 
 export default function Home() {
+  const [callbackForm, setCallbackForm] = useState({
+    name: "",
+    phone: "",
+    message: ""
+  })
+
+  const handleCallbackSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Handle form submission
+    window.location.href = `tel:03174121900`
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center space-x-2">
-              <span className="text-xl font-bold text-primary">Clarity</span>
-              <span className="text-xl font-bold">Tax</span>
+              <span className="text-xl font-bold text-primary">Procount</span>
+              <span className="text-xl font-bold">Solutions</span>
             </Link>
           </div>
           <nav className="hidden md:flex gap-6">
-            <Link href="#" className="text-sm font-medium hover:text-primary">
+            <Link href="#home" className="text-sm font-medium hover:text-primary">
               Home
             </Link>
             <Link href="#services" className="text-sm font-medium hover:text-primary">
               Services
             </Link>
-            <Link href="#about" className="text-sm font-medium hover:text-primary">
-              About
+            <Link href="#principles" className="text-sm font-medium hover:text-primary">
+              Principles
             </Link>
             <Link href="#calculator" className="text-sm font-medium hover:text-primary">
               Calculator
             </Link>
-            <Link href="#testimonials" className="text-sm font-medium hover:text-primary">
-              Testimonials
+            <Link href="#about" className="text-sm font-medium hover:text-primary">
+              About
             </Link>
-            <Link href="#blog" className="text-sm font-medium hover:text-primary">
-              Blog
+            <Link href="#contact" className="text-sm font-medium hover:text-primary">
+              Contact
             </Link>
           </nav>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" className="hidden md:flex">
-              Log in
-            </Button>
-            <Button size="sm" className="hidden md:flex">
+            <Button size="sm" className="hidden md:flex" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
               Contact Us
             </Button>
             <Button variant="ghost" size="icon" className="md:hidden">
@@ -67,12 +80,13 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="relative">
+        {/* Hero Section */}
+        <section id="home" className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70 z-10" />
           <div className="relative h-[600px]">
             <Image
               src="/placeholder.svg?height=600&width=1200"
-              alt="Tax professionals in a meeting"
+              alt="ProcountSolutions - Professional Accounting and Tax Services"
               fill
               className="object-cover"
               priority
@@ -81,190 +95,230 @@ export default function Home() {
           <div className="container absolute inset-0 z-20 flex items-center">
             <div className="max-w-2xl text-white">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-                Strategic Tax Solutions for Your Financial Success
+                ProcountSolutions Pvt Limited
               </h1>
+              <p className="mt-4 text-xl font-semibold">
+                CEO: Hamza Riaz
+              </p>
               <p className="mt-6 text-xl">
-                Expert tax planning and compliance services to optimize your financial position and secure your future.
+                Trusted accounting and consultancy company providing end-to-end financial and compliance solutions to businesses in Pakistan, the Gulf region, and Europe.
               </p>
               <div className="mt-10 flex gap-4">
-                <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
-                  Schedule Consultation
+                <Button size="lg" className="bg-white text-primary hover:bg-gray-100" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
+                  Request a Call Back
                 </Button>
-                <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
+                {/* <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}>
                   Explore Services
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>
         </section>
 
+        {/* Services We Offer */}
         <section id="services" className="py-20 bg-gray-50">
           <div className="container">
             <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Comprehensive Tax Services</h2>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Services We Offer</h2>
               <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                Our team of certified tax professionals provides tailored solutions to meet your specific needs.
+                Comprehensive financial and compliance solutions tailored to your business needs.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>Personal Tax Planning & Filing</CardTitle>
-                  <CardDescription>Optimize your personal tax situation</CardDescription>
+                  <CardTitle>Compliance & Legal Registrations</CardTitle>
+                  <CardDescription>Complete registration services</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>
-                    Comprehensive personal tax services including return preparation, tax planning strategies, and
-                    maximizing deductions to minimize your tax burden.
-                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Company registration and incorporation in Pakistan</li>
+                    <li>• Trademark and copyright registration</li>
+                    <li>• EOBI, Social Security, and Provident Fund registration</li>
+                    <li>• PSEB, P@SHA and LCCI registrations</li>
+                  </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button>Learn More</Button>
-                </CardFooter>
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Business Tax Compliance</CardTitle>
-                  <CardDescription>Stay compliant and minimize liability</CardDescription>
+                  <CardTitle>Taxation Services</CardTitle>
+                  <CardDescription>Expert tax solutions</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>
-                    Full-service business tax solutions including corporate returns, quarterly estimates, and strategic
-                    planning to reduce your company's tax exposure.
-                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li>• FBR NTN registration for individuals and businesses</li>
+                    <li>• Income tax return filing for individuals and companies</li>
+                    <li>• Sales tax registration and compliance</li>
+                    <li>• Strategic tax planning and advisory</li>
+                  </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button>Learn More</Button>
-                </CardFooter>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Business Registration</CardTitle>
-                  <CardDescription>Start your business the right way</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>
-                    Complete business formation services including entity selection, registration with tax authorities,
-                    and obtaining necessary licenses and permits.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button>Learn More</Button>
-                </CardFooter>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Tax Audit Representation</CardTitle>
-                  <CardDescription>Expert defense during tax audits</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p>
-                    Professional representation during tax audits, including preparation of documentation, communication
-                    with tax authorities, and resolution of disputes.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button>Learn More</Button>
-                </CardFooter>
               </Card>
               <Card>
                 <CardHeader>
                   <CardTitle>Accounting & Bookkeeping</CardTitle>
-                  <CardDescription>Maintain accurate financial records</CardDescription>
+                  <CardDescription>Professional financial management</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>
-                    Comprehensive bookkeeping and accounting services to ensure accurate financial reporting, compliance
-                    with regulations, and informed business decisions.
-                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Complete accounting and bookkeeping services</li>
+                    <li>• Financial statement preparation</li>
+                    <li>• Monthly, quarterly, and annual reporting</li>
+                    <li>• Using leading cloud-based software: Zoho Books, Sage, and QuickBooks</li>
+                    <li>• Real-time financial insights for better business decisions</li>
+                  </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button>Learn More</Button>
-                </CardFooter>
               </Card>
               <Card>
                 <CardHeader>
-                  <CardTitle>Digital Tax Solutions</CardTitle>
-                  <CardDescription>Modern tax management tools</CardDescription>
+                  <CardTitle>Business Advisory</CardTitle>
+                  <CardDescription>Strategic business guidance</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p>
-                    Cutting-edge digital tax solutions including cloud-based accounting, electronic filing, and secure
-                    document management for maximum efficiency.
-                  </p>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Business Planning and structure</li>
+                    <li>• Performance improvement</li>
+                    <li>• Cost reduction and efficiency analysis</li>
+                    <li>• Risk management and internal controls</li>
+                    <li>• Process Optimization</li>
+                    <li>• Decision making Support</li>
+                  </ul>
                 </CardContent>
-                <CardFooter>
-                  <Button>Learn More</Button>
-                </CardFooter>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Financial Advisory</CardTitle>
+                  <CardDescription>Comprehensive financial planning</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Budgeting and forecasting</li>
+                    <li>• Cashflow management</li>
+                    <li>• Financial feasibility studies</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gulf Region Services</CardTitle>
+                  <CardDescription>UAE, Saudi Arabia, Bahrain</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Remote bookkeeping services</li>
+                    <li>• VAT return filing and compliance</li>
+                    <li>• Corporate annual return preparation and submission</li>
+                    <li>• Business Plan and feasibility Report</li>
+                    <li>• Forecasting and projection</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Europe-Focused Services</CardTitle>
+                  <CardDescription>Dedicated European client services</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 text-sm">
+                    <li>• Dedicated bookkeeping services for European clients</li>
+                    <li>• Cloud-based accounting using QuickBooks</li>
+                    <li>• Monthly financial reports, bank reconciliations, and ledger maintenance</li>
+                    <li>• Cost-effective outsourcing with accuracy and confidentiality</li>
+                  </ul>
+                </CardContent>
               </Card>
             </div>
           </div>
         </section>
 
-        <section id="about" className="py-20">
+        {/* Principles of Our Work */}
+        <section id="principles" className="py-20">
           <div className="container">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-6">Premier Tax Advisory Services</h2>
-                <p className="text-lg mb-6">
-                  Clarity Tax delivers exceptional tax consulting services tailored to your unique financial situation.
-                  Our team of certified professionals combines deep technical knowledge with personalized attention to
-                  help you navigate complex tax regulations.
-                </p>
-                <p className="text-lg mb-8">
-                  Whether you're an individual seeking to optimize your personal taxes or a business looking for
-                  comprehensive tax planning, our strategic approach ensures you receive the most advantageous tax
-                  position possible.
-                </p>
-                <Button size="lg">Schedule a Consultation</Button>
-              </div>
-              <div className="relative h-[400px] rounded-lg overflow-hidden">
-                <Image
-                  src="/placeholder.svg?height=400&width=600"
-                  alt="Tax professionals in discussion"
-                  fill
-                  className="object-cover"
-                />
-              </div>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Principles of Our Work</h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+                These foundational values guide our approach to every client relationship and solution we provide.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Confidentiality & Integrity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    We handle all client information with the utmost confidentiality and operate with complete honesty, transparency, and ethical standards.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Client-Centric Approach</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Our services are tailored to meet the unique needs of each client. We focus on delivering practical, results-driven solutions with personalized attention.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Long-Term Partnerships</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    We aim to build lasting relationships with our clients by providing consistent support, value, and trust over time.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Professionalism & Expertise</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Our team brings strong technical knowledge, industry expertise, and a commitment to staying updated with the latest accounting and tax regulations.
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
 
+        {/* Tax Calculator & WHT Tax Card */}
         <section id="calculator" className="py-20 bg-gray-50">
           <div className="container">
             <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Tax Calculator 2024-2025</h2>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Tax Calculator & WHT Tax Card</h2>
               <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                Estimate your tax liability with our easy-to-use calculator. Get a quick overview of your potential tax
-                situation.
+                Estimate your tax liability and access WHT tax card services with our easy-to-use tools.
               </p>
             </div>
             <div className="max-w-4xl mx-auto">
-              <Tabs defaultValue="individual" className="w-full">
+              <Tabs defaultValue="tax-calculator" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="individual">Individual</TabsTrigger>
-                  <TabsTrigger value="business">Business</TabsTrigger>
+                  <TabsTrigger value="tax-calculator">Tax Calculator</TabsTrigger>
+                  <TabsTrigger value="wht-card">WHT Tax Card</TabsTrigger>
                 </TabsList>
-                <TabsContent value="individual" className="p-6 bg-white rounded-lg shadow-sm mt-4">
+                <TabsContent value="tax-calculator" className="p-6 bg-white rounded-lg shadow-sm mt-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
                         <label htmlFor="annual-income" className="block text-sm font-medium mb-1">
-                          Annual Income
+                          Annual Income (PKR)
                         </label>
-                        <Input id="annual-income" placeholder="Enter your annual income" />
+                        <Input id="annual-income" type="number" placeholder="Enter your annual income" />
                       </div>
                       <div>
                         <label htmlFor="deductions" className="block text-sm font-medium mb-1">
-                          Total Deductions
+                          Total Deductions (PKR)
                         </label>
-                        <Input id="deductions" placeholder="Enter total deductions" />
+                        <Input id="deductions" type="number" placeholder="Enter total deductions" />
                       </div>
                       <div>
                         <label htmlFor="tax-credits" className="block text-sm font-medium mb-1">
-                          Tax Credits
+                          Tax Credits (PKR)
                         </label>
-                        <Input id="tax-credits" placeholder="Enter tax credits" />
+                        <Input id="tax-credits" type="number" placeholder="Enter tax credits" />
                       </div>
                       <Button className="w-full mt-4">
                         <Calculator className="mr-2 h-4 w-4" /> Calculate Tax
@@ -277,35 +331,46 @@ export default function Home() {
                     </div>
                   </div>
                 </TabsContent>
-                <TabsContent value="business" className="p-6 bg-white rounded-lg shadow-sm mt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div>
-                        <label htmlFor="business-income" className="block text-sm font-medium mb-1">
-                          Business Revenue
-                        </label>
-                        <Input id="business-income" placeholder="Enter business revenue" />
-                      </div>
-                      <div>
-                        <label htmlFor="business-expenses" className="block text-sm font-medium mb-1">
-                          Business Expenses
-                        </label>
-                        <Input id="business-expenses" placeholder="Enter business expenses" />
-                      </div>
-                      <div>
-                        <label htmlFor="business-credits" className="block text-sm font-medium mb-1">
-                          Business Tax Credits
-                        </label>
-                        <Input id="business-credits" placeholder="Enter business tax credits" />
-                      </div>
-                      <Button className="w-full mt-4">
-                        <Calculator className="mr-2 h-4 w-4" /> Calculate Business Tax
-                      </Button>
+                <TabsContent value="wht-card" className="p-6 bg-white rounded-lg shadow-sm mt-4">
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-xl font-semibold mb-4">Withholding Tax (WHT) Card Services</h3>
+                      <p className="text-muted-foreground mb-4">
+                        We provide comprehensive WHT tax card services including registration, renewal, and compliance support.
+                      </p>
                     </div>
-                    <div className="flex items-center justify-center">
-                      <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <p className="text-muted-foreground">Business tax calculation results will appear here</p>
-                      </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-lg">WHT Registration</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">
+                            Complete WHT card registration services for individuals and businesses.
+                          </p>
+                        </CardContent>
+                        <CardFooter>
+                          <Button variant="outline" className="w-full">Learn More</Button>
+                        </CardFooter>
+                      </Card>
+                      <Card>
+                        <CardHeader>
+                          <CardTitle className="text-lg">WHT Renewal</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground">
+                            Timely renewal services to ensure continuous compliance with tax regulations.
+                          </p>
+                        </CardContent>
+                        <CardFooter>
+                          <Button variant="outline" className="w-full">Learn More</Button>
+                        </CardFooter>
+                      </Card>
+                    </div>
+                    <div className="mt-6">
+                      <Button className="w-full" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
+                        <FileText className="mr-2 h-4 w-4" /> Request WHT Card Service
+                      </Button>
                     </div>
                   </div>
                 </TabsContent>
@@ -314,352 +379,310 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-20">
-          <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Core Principles</h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                These foundational values guide our approach to every client relationship and tax solution we provide.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary mb-4">
-                  <span className="text-xl font-bold">01</span>
-                </div>
-                <h3 className="text-xl font-bold mb-3">Expertise</h3>
-                <p className="text-muted-foreground">
-                  Our team consists of highly qualified tax professionals with extensive experience across various
-                  industries and tax situations.
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary mb-4">
-                  <span className="text-xl font-bold">02</span>
-                </div>
-                <h3 className="text-xl font-bold mb-3">Long-term Relationships</h3>
-                <p className="text-muted-foreground">
-                  We focus on building lasting partnerships with our clients, providing consistent support and adapting
-                  to their evolving needs.
-                </p>
-              </div>
-              <div className="text-center">
-                <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 text-primary mb-4">
-                  <span className="text-xl font-bold">03</span>
-                </div>
-                <h3 className="text-xl font-bold mb-3">Value-Driven Solutions</h3>
-                <p className="text-muted-foreground">
-                  We deliver practical, effective tax strategies that provide measurable value and tangible financial
-                  benefits to our clients.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20 bg-gray-50">
-          <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Achievements</h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                A track record of excellence in providing exceptional tax services to our valued clients.
-              </p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">15+</div>
-                <p className="text-muted-foreground">Years Experience</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">2,500+</div>
-                <p className="text-muted-foreground">Satisfied Clients</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">$30M+</div>
-                <p className="text-muted-foreground">Tax Savings</p>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-primary mb-2">98%</div>
-                <p className="text-muted-foreground">Client Retention</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="testimonials" className="py-20">
-          <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">What Our Clients Say</h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                Hear from businesses and individuals who have transformed their tax situation with our help.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-primary"
-                      >
-                        <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
-                        <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
-                      </svg>
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-sm font-medium">Michael Thompson</div>
-                      <div className="text-xs text-muted-foreground">CEO, Thompson Enterprises</div>
-                    </div>
-                  </div>
-                  <p className="text-muted-foreground">
-                    "Clarity Tax has been instrumental in optimizing our corporate tax strategy. Their proactive
-                    approach has saved us thousands while ensuring complete compliance. Highly recommended!"
-                  </p>
-                  <div className="flex mt-4">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="text-yellow-400"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-primary"
-                      >
-                        <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
-                        <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
-                      </svg>
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-sm font-medium">Sarah Johnson</div>
-                      <div className="text-xs text-muted-foreground">Small Business Owner</div>
-                    </div>
-                  </div>
-                  <p className="text-muted-foreground">
-                    "As a small business owner, tax compliance was overwhelming until I found Clarity Tax. They
-                    simplified everything and found deductions I never knew existed. My business is thriving thanks to
-                    their expertise."
-                  </p>
-                  <div className="flex mt-4">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="text-yellow-400"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="text-primary"
-                      >
-                        <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
-                        <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
-                      </svg>
-                    </div>
-                    <div className="flex flex-col">
-                      <div className="text-sm font-medium">David Rodriguez</div>
-                      <div className="text-xs text-muted-foreground">Real Estate Investor</div>
-                    </div>
-                  </div>
-                  <p className="text-muted-foreground">
-                    "The team at Clarity Tax understands the complexities of real estate taxation like no other. Their
-                    strategic advice has maximized my investment returns while keeping me fully compliant."
-                  </p>
-                  <div className="flex mt-4">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="text-yellow-400"
-                      >
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                      </svg>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        <section id="blog" className="py-20 bg-gray-50">
-          <div className="container">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">From Our Blog</h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-                Stay informed with the latest tax insights, updates, and strategies from our expert team.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card>
-                <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
-                  <Image
-                    src="/placeholder.svg?height=200&width=400"
-                    alt="Blog post thumbnail"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardHeader>
-                  <div className="text-sm text-muted-foreground mb-2">April 15, 2024</div>
-                  <CardTitle>Essential Tax Deductions Most Business Owners Miss</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Discover the often-overlooked tax deductions that could significantly reduce your business tax
-                    liability and improve your bottom line.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline">Read More</Button>
-                </CardFooter>
-              </Card>
-              <Card>
-                <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
-                  <Image
-                    src="/placeholder.svg?height=200&width=400"
-                    alt="Blog post thumbnail"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardHeader>
-                  <div className="text-sm text-muted-foreground mb-2">March 28, 2024</div>
-                  <CardTitle>Tax Planning Strategies for the Self-Employed</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    Learn effective tax planning techniques specifically designed for freelancers and self-employed
-                    professionals to maximize savings.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline">Read More</Button>
-                </CardFooter>
-              </Card>
-              <Card>
-                <div className="relative h-48 w-full overflow-hidden rounded-t-lg">
-                  <Image
-                    src="/placeholder.svg?height=200&width=400"
-                    alt="Blog post thumbnail"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardHeader>
-                  <div className="text-sm text-muted-foreground mb-2">March 10, 2024</div>
-                  <CardTitle>Understanding the New Tax Law Changes for 2024</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">
-                    A comprehensive breakdown of the latest tax law changes and how they might impact your personal and
-                    business tax situation.
-                  </p>
-                </CardContent>
-                <CardFooter>
-                  <Button variant="outline">Read More</Button>
-                </CardFooter>
-              </Card>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-20">
+        {/* Request a Call Back */}
+        <section id="callback" className="py-20">
           <div className="container">
             <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2">
                 <div className="p-8 md:p-12">
-                  <h2 className="text-2xl font-bold mb-6">Ready to Optimize Your Tax Strategy?</h2>
+                  <h2 className="text-2xl font-bold mb-6">Request a Call Back</h2>
                   <p className="mb-6 text-muted-foreground">
-                    Schedule a no-obligation consultation with our tax experts and discover how we can help you minimize
-                    tax liability and maximize financial success.
+                    Get in touch with our team. We'll call you back to discuss your requirements and how we can help your business.
                   </p>
-                  <div className="space-y-4">
+                  <form onSubmit={handleCallbackSubmit} className="space-y-4">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium mb-1">
+                      <label htmlFor="callback-name" className="block text-sm font-medium mb-1">
                         Full Name
                       </label>
-                      <Input id="name" placeholder="Enter your full name" />
+                      <Input 
+                        id="callback-name" 
+                        placeholder="Enter your full name" 
+                        value={callbackForm.name}
+                        onChange={(e) => setCallbackForm({...callbackForm, name: e.target.value})}
+                        required
+                      />
                     </div>
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium mb-1">
-                        Email Address
+                      <label htmlFor="callback-phone" className="block text-sm font-medium mb-1">
+                        Mobile Number
                       </label>
-                      <Input id="email" type="email" placeholder="Enter your email" />
+                      <Input 
+                        id="callback-phone" 
+                        type="tel" 
+                        placeholder="Enter your mobile number" 
+                        value={callbackForm.phone}
+                        onChange={(e) => setCallbackForm({...callbackForm, phone: e.target.value})}
+                        required
+                      />
                     </div>
                     <div>
-                      <label htmlFor="phone" className="block text-sm font-medium mb-1">
-                        Phone Number
+                      <label htmlFor="callback-message" className="block text-sm font-medium mb-1">
+                        Message (Optional)
                       </label>
-                      <Input id="phone" placeholder="Enter your phone number" />
+                      <Textarea 
+                        id="callback-message" 
+                        placeholder="Tell us about your requirements" 
+                        value={callbackForm.message}
+                        onChange={(e) => setCallbackForm({...callbackForm, message: e.target.value})}
+                        rows={4}
+                      />
                     </div>
-                    <Button className="w-full">Request Consultation</Button>
+                    <Button type="submit" className="w-full">
+                      <Phone className="mr-2 h-4 w-4" /> Request Call Back
+                    </Button>
+                  </form>
+                  <div className="mt-6 p-4 bg-primary/10 rounded-lg">
+                    <p className="text-sm font-medium">Direct Contact:</p>
+                    <p className="text-sm text-muted-foreground">Name: Hamza Riaz</p>
+                    <p className="text-sm text-muted-foreground">Mobile: <a href="tel:03174121900" className="text-primary hover:underline">03174121900</a></p>
                   </div>
                 </div>
-                <div className="relative h-64 md:h-auto">
-                  <Image
-                    src="/placeholder.svg?height=400&width=500"
-                    alt="Tax consultation"
-                    fill
-                    className="object-cover"
-                  />
+                <div className="relative h-64 md:h-auto bg-gradient-to-br from-primary/20 to-primary/5">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Phone className="h-32 w-32 text-primary/30" />
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* About Us */}
+        <section id="about" className="py-20 bg-gray-50">
+          <div className="container">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-6">About Us</h2>
+                <p className="text-lg mb-6">
+                  We are a trusted accounting and consultancy company providing end-to-end financial and compliance solutions to businesses in Pakistan, the Gulf region (including Saudi Arabia, UAE, and Bahrain), and Europe.
+                </p>
+                <p className="text-lg mb-6">
+                  Our mission is to simplify business operations and financial management through accurate bookkeeping, timely tax filing, and regulatory compliance. Whether you're launching a new venture or managing an established business, we help you stay compliant and financially organized—locally and globally.
+                </p>
+                <p className="text-lg mb-8">
+                  With the use of cloud-based tools such as Zoho Books, Sage, and QuickBooks, we offer streamlined, remote-friendly services tailored to your business model.
+                </p>
+                <Button size="lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
+                  Get in Touch
+                </Button>
+              </div>
+              <div className="relative h-[400px] rounded-lg overflow-hidden">
+                <Image
+                  src="/placeholder.svg?height=400&width=600"
+                  alt="ProcountSolutions team"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Our Services - Detailed */}
+        <section className="py-20">
+          <div className="container">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Services</h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+                Comprehensive services tailored for Pakistan, Gulf Region, and Europe.
+              </p>
+            </div>
+            <div className="space-y-12">
+              <div>
+                <h3 className="text-2xl font-bold mb-6">Pakistan-Based Services</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Compliance & Registration</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li>• Company registration and incorporation in Pakistan</li>
+                        <li>• Trademark and copyright registration</li>
+                        <li>• EOBI, Social Security, and Provident Fund registration</li>
+                        <li>• PSEB, P@SHA and LCCI registrations</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Taxation & Compliance</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li>• FBR NTN registration for individuals and businesses</li>
+                        <li>• Income tax return filing for individuals and companies</li>
+                        <li>• Sales tax registration and compliance</li>
+                        <li>• Strategic tax planning and advisory</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Accounting & Reporting</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li>• Complete accounting and bookkeeping services</li>
+                        <li>• Financial statement preparation</li>
+                        <li>• Monthly, quarterly, and annual reporting</li>
+                        <li>• Using leading cloud-based software: Zoho Books, Sage, and QuickBooks</li>
+                        <li>• Real-time financial insights for better business decisions</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Business Planning</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li>• Business Plan and feasibility Report</li>
+                        <li>• Forecasting and projection</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-6">Gulf Region Services (UAE, Saudi Arabia, Bahrain)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Remote Services</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li>• Remote bookkeeping services</li>
+                        <li>• VAT return filing and compliance</li>
+                        <li>• Corporate annual return preparation and submission</li>
+                        <li>• Business Plan and feasibility Report</li>
+                        <li>• Forecasting and projection</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-6">Europe-Focused Services</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>European Client Services</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-sm">
+                        <li>• Dedicated bookkeeping services for European clients</li>
+                        <li>• Cloud-based accounting using QuickBooks</li>
+                        <li>• Monthly financial reports, bank reconciliations, and ledger maintenance</li>
+                        <li>• Cost-effective outsourcing with a focus on accuracy and confidentiality</li>
+                      </ul>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Why Choose Us */}
+        <section className="py-20 bg-gray-50">
+          <div className="container">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Why Choose Us?</h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+                We deliver exceptional value through expertise, technology, and personalized service.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Certified Professionals</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Certified professionals with regional and international experience in accounting, taxation, and business advisory.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Cloud-Based Solutions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Secure and remote-friendly cloud accounting solutions using Zoho Books, Sage, and QuickBooks for seamless collaboration.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Personalized Support</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Personalized support with a long-term partnership mindset, ensuring your business receives dedicated attention and care.
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Transparent Pricing</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">
+                    Transparent pricing and timely delivery, ensuring you know exactly what you're paying for and when to expect results.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section id="contact" className="py-20">
+          <div className="container">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Contact Us</h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+                Get in touch with our team for expert financial and compliance solutions.
+              </p>
+            </div>
+            <div className="max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <Card>
+                  <CardHeader>
+                    <Phone className="h-8 w-8 text-primary mb-2" />
+                    <CardTitle>Call Us</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <a href="tel:03174121900" className="text-lg font-semibold text-primary hover:underline">
+                      03174121900
+                    </a>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <Mail className="h-8 w-8 text-primary mb-2" />
+                    <CardTitle>Email Us</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <a href="mailto:info@procountSolutions.com" className="text-lg font-semibold text-primary hover:underline break-all">
+                      info@procountSolutions.com
+                    </a>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <MapPin className="h-8 w-8 text-primary mb-2" />
+                    <CardTitle>Our Location</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-lg font-semibold">
+                      Lahore, Pakistan
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
@@ -670,12 +693,11 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-xl font-bold text-primary">Clarity</span>
-                <span className="text-xl font-bold">Tax</span>
+                <span className="text-xl font-bold text-primary">Procount</span>
+                <span className="text-xl font-bold">Solutions</span>
               </div>
               <p className="text-gray-400 mb-4">
-                Professional tax services for individuals and businesses. Optimize your tax position with our expert
-                team.
+                Professional accounting and consultancy services for businesses in Pakistan, Gulf region, and Europe.
               </p>
               <div className="flex space-x-4">
                 <Link href="#" className="text-gray-400 hover:text-white">
@@ -748,28 +770,28 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-4">Services</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
-                    Personal Tax Planning
+                  <Link href="#services" className="text-gray-400 hover:text-white">
+                    Compliance & Legal Registrations
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
-                    Business Tax Compliance
+                  <Link href="#services" className="text-gray-400 hover:text-white">
+                    Taxation Services
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
-                    Business Registration
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
-                    Tax Audit Representation
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
+                  <Link href="#services" className="text-gray-400 hover:text-white">
                     Accounting & Bookkeeping
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#services" className="text-gray-400 hover:text-white">
+                    Business Advisory
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#services" className="text-gray-400 hover:text-white">
+                    Financial Advisory
                   </Link>
                 </li>
               </ul>
@@ -778,27 +800,32 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
-                    About Us
+                  <Link href="#home" className="text-gray-400 hover:text-white">
+                    Home
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
+                  <Link href="#services" className="text-gray-400 hover:text-white">
                     Services
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
-                    Blog
+                  <Link href="#principles" className="text-gray-400 hover:text-white">
+                    Principles
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
-                    Testimonials
+                  <Link href="#calculator" className="text-gray-400 hover:text-white">
+                    Calculator
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-gray-400 hover:text-white">
+                  <Link href="#about" className="text-gray-400 hover:text-white">
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#contact" className="text-gray-400 hover:text-white">
                     Contact
                   </Link>
                 </li>
@@ -808,67 +835,29 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
               <ul className="space-y-2">
                 <li className="flex items-start gap-3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-gray-400 mt-0.5"
-                  >
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                  </svg>
-                  <span className="text-gray-400">(123) 456-7890</span>
+                  <Phone className="text-gray-400 mt-0.5 h-5 w-5" />
+                  <a href="tel:03174121900" className="text-gray-400 hover:text-white">
+                    03174121900
+                  </a>
                 </li>
                 <li className="flex items-start gap-3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-gray-400 mt-0.5"
-                  >
-                    <rect width="20" height="16" x="2" y="4" rx="2" />
-                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                  </svg>
-                  <span className="text-gray-400">info@claritytax.com</span>
+                  <Mail className="text-gray-400 mt-0.5 h-5 w-5" />
+                  <a href="mailto:info@procountSolutions.com" className="text-gray-400 hover:text-white break-all">
+                    info@procountSolutions.com
+                  </a>
                 </li>
                 <li className="flex items-start gap-3">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-gray-400 mt-0.5"
-                  >
-                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
+                  <MapPin className="text-gray-400 mt-0.5 h-5 w-5" />
                   <span className="text-gray-400">
-                    123 Business Ave, Suite 500
-                    <br />
-                    New York, NY 10001
+                    Lahore, Pakistan
                   </span>
                 </li>
               </ul>
             </div>
           </div>
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} Clarity Tax. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} ProcountSolutions Pvt Limited. All rights reserved.</p>
+            <p className="mt-2">CEO: Hamza Riaz</p>
           </div>
         </div>
       </footer>

@@ -5,8 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Clarity Tax - Professional Tax Consultancy Services",
-  description: "Expert tax planning and compliance services for individuals and businesses.",
+  title: "ProcountSolutions - Professional Accounting & Tax Consultancy Services",
+  description: "Trusted accounting and consultancy company providing end-to-end financial and compliance solutions to businesses in Pakistan, Gulf region, and Europe.",
     generator: 'v0.dev'
 }
 

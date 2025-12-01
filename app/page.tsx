@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 
 export default function Home() {
@@ -16,6 +17,116 @@ export default function Home() {
     phone: "",
     message: ""
   })
+
+  const [taxCalculator, setTaxCalculator] = useState({
+    incomeType: "salary", // "salary" or "business"
+    annualIncome: "",
+    deductions: "",
+    taxCredits: ""
+  })
+
+  const [taxResult, setTaxResult] = useState<{
+    taxableIncome: number
+    taxAmount: number
+    effectiveRate: number
+    breakdown: Array<{ bracket: string; amount: number; rate: number; tax: number }>
+  } | null>(null)
+
+  // Pakistan Tax Rates 2025-2026
+  const salaryTaxBrackets = [
+    { min: 0, max: 600000, rate: 0 },
+    { min: 600001, max: 1200000, rate: 0.01 },
+    { min: 1200001, max: 2200000, rate: 0.11 },
+    { min: 2200001, max: 3200000, rate: 0.23 },
+    { min: 3200001, max: 4100000, rate: 0.30 },
+    { min: 4100001, max: Infinity, rate: 0.35 }
+  ]
+
+  const businessTaxBrackets = [
+    { min: 0, max: 600000, rate: 0 },
+    { min: 600001, max: 1200000, rate: 0.02 },
+    { min: 1200001, max: 2200000, rate: 0.22 },
+    { min: 2200001, max: 3200000, rate: 0.46 },
+    { min: 3200001, max: 4100000, rate: 0.60 },
+    { min: 4100001, max: Infinity, rate: 0.70 }
+  ]
+
+  const calculateTax = () => {
+    const income = parseFloat(taxCalculator.annualIncome) || 0
+    const deductions = parseFloat(taxCalculator.deductions) || 0
+    const taxCredits = parseFloat(taxCalculator.taxCredits) || 0
+
+    if (income <= 0) {
+      setTaxResult(null)
+      return
+    }
+
+    const taxableIncome = Math.max(0, income - deductions)
+    const brackets = taxCalculator.incomeType === "salary" ? salaryTaxBrackets : businessTaxBrackets
+    
+    let totalTax = 0
+    const breakdown: Array<{ bracket: string; amount: number; rate: number; tax: number }> = []
+    let incomeProcessed = 0
+
+    for (let i = 0; i < brackets.length; i++) {
+      const bracket = brackets[i]
+      
+      if (incomeProcessed >= taxableIncome) break
+      if (taxableIncome <= bracket.min) continue
+
+      // Calculate the amount in this bracket
+      const bracketStart = Math.max(bracket.min, incomeProcessed)
+      const bracketEnd = bracket.max === Infinity ? taxableIncome : Math.min(bracket.max, taxableIncome)
+      const amountInBracket = Math.max(0, bracketEnd - bracketStart)
+      
+      if (amountInBracket > 0) {
+        const taxInBracket = amountInBracket * bracket.rate
+        totalTax += taxInBracket
+        
+        let bracketLabel = ""
+        if (bracket.min === 0) {
+          if (bracket.max >= 1000000) {
+            bracketLabel = `0 - ${(bracket.max / 1000000).toFixed(1)}M PKR`
+          } else {
+            bracketLabel = `0 - ${(bracket.max / 1000).toFixed(0)}K PKR`
+          }
+        } else if (bracket.max === Infinity) {
+          bracketLabel = `Above ${(bracket.min / 1000000).toFixed(1)}M PKR`
+        } else {
+          const minLabel = bracket.min >= 1000000 
+            ? `${(bracket.min / 1000000).toFixed(1)}M` 
+            : `${(bracket.min / 1000).toFixed(0)}K`
+          const maxLabel = bracket.max >= 1000000 
+            ? `${(bracket.max / 1000000).toFixed(1)}M` 
+            : `${(bracket.max / 1000).toFixed(0)}K`
+          bracketLabel = `${minLabel} - ${maxLabel} PKR`
+        }
+        
+        breakdown.push({
+          bracket: bracketLabel,
+          amount: amountInBracket,
+          rate: bracket.rate * 100,
+          tax: taxInBracket
+        })
+        
+        incomeProcessed = bracketEnd
+      }
+    }
+
+    const finalTax = Math.max(0, Math.round(totalTax - taxCredits))
+    const effectiveRate = taxableIncome > 0 ? (finalTax / taxableIncome) * 100 : 0
+
+    setTaxResult({
+      taxableIncome: Math.round(taxableIncome),
+      taxAmount: finalTax,
+      effectiveRate,
+      breakdown: breakdown.map(item => ({
+        ...item,
+        amount: Math.round(item.amount),
+        tax: Math.round(item.tax)
+      }))
+    })
+  }
 
   const handleCallbackSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -303,31 +414,133 @@ export default function Home() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div>
+                        <label htmlFor="income-type" className="block text-sm font-medium mb-1">
+                          Income Type
+                        </label>
+                        <Select
+                          value={taxCalculator.incomeType}
+                          onValueChange={(value) => setTaxCalculator({ ...taxCalculator, incomeType: value })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select income type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="salary">Salary Income</SelectItem>
+                            <SelectItem value="business">Business Income</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {taxCalculator.incomeType === "salary" 
+                            ? "Tax rates: 0% (up to 600k), 1% (600k-1.2M), 11% (1.2M-2.2M), 23% (2.2M-3.2M), 30% (3.2M-4.1M), 35% (above 4.1M)"
+                            : "Tax rates: 0% (up to 600k), 2% (600k-1.2M), 22% (1.2M-2.2M), 46% (2.2M-3.2M), 60% (3.2M-4.1M), 70% (above 4.1M)"}
+                        </p>
+                      </div>
+                      <div>
                         <label htmlFor="annual-income" className="block text-sm font-medium mb-1">
                           Annual Income (PKR)
                         </label>
-                        <Input id="annual-income" type="number" placeholder="Enter your annual income" />
+                        <Input 
+                          id="annual-income" 
+                          type="number" 
+                          placeholder="Enter your annual income" 
+                          value={taxCalculator.annualIncome}
+                          onChange={(e) => setTaxCalculator({ ...taxCalculator, annualIncome: e.target.value })}
+                        />
                       </div>
                       <div>
                         <label htmlFor="deductions" className="block text-sm font-medium mb-1">
                           Total Deductions (PKR)
                         </label>
-                        <Input id="deductions" type="number" placeholder="Enter total deductions" />
+                        <Input 
+                          id="deductions" 
+                          type="number" 
+                          placeholder="Enter total deductions" 
+                          value={taxCalculator.deductions}
+                          onChange={(e) => setTaxCalculator({ ...taxCalculator, deductions: e.target.value })}
+                        />
                       </div>
                       <div>
                         <label htmlFor="tax-credits" className="block text-sm font-medium mb-1">
                           Tax Credits (PKR)
                         </label>
-                        <Input id="tax-credits" type="number" placeholder="Enter tax credits" />
+                        <Input 
+                          id="tax-credits" 
+                          type="number" 
+                          placeholder="Enter tax credits" 
+                          value={taxCalculator.taxCredits}
+                          onChange={(e) => setTaxCalculator({ ...taxCalculator, taxCredits: e.target.value })}
+                        />
                       </div>
-                      <Button className="w-full mt-4">
+                      <Button className="w-full mt-4" onClick={calculateTax}>
                         <Calculator className="mr-2 h-4 w-4" /> Calculate Tax
                       </Button>
                     </div>
                     <div className="flex items-center justify-center">
-                      <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <p className="text-muted-foreground">Tax calculation results will appear here</p>
-                      </div>
+                      {taxResult ? (
+                        <div className="w-full bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-6 space-y-4">
+                          <div className="text-center border-b pb-4">
+                            <h3 className="text-lg font-semibold mb-2">Tax Calculation Results</h3>
+                            <p className="text-sm text-muted-foreground">Tax Year 2025-2026 ({taxCalculator.incomeType === "salary" ? "Salary" : "Business"} Income)</p>
+                          </div>
+                          <div className="space-y-3">
+                            <div className="flex justify-between">
+                              <span className="text-sm text-muted-foreground">Gross Income:</span>
+                              <span className="font-semibold">{parseFloat(taxCalculator.annualIncome || "0").toLocaleString('en-PK')} PKR</span>
+                            </div>
+                            {parseFloat(taxCalculator.deductions || "0") > 0 && (
+                              <div className="flex justify-between">
+                                <span className="text-sm text-muted-foreground">Deductions:</span>
+                                <span className="font-semibold text-green-600">-{parseFloat(taxCalculator.deductions || "0").toLocaleString('en-PK')} PKR</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between border-t pt-2">
+                              <span className="text-sm font-medium">Taxable Income:</span>
+                              <span className="font-semibold">{taxResult.taxableIncome.toLocaleString('en-PK')} PKR</span>
+                            </div>
+                            <div className="flex justify-between text-lg font-bold border-t pt-2">
+                              <span>Total Tax:</span>
+                              <span className="text-primary">{taxResult.taxAmount.toLocaleString('en-PK')} PKR</span>
+                            </div>
+                            {parseFloat(taxCalculator.taxCredits || "0") > 0 && (
+                              <div className="flex justify-between text-sm">
+                                <span className="text-muted-foreground">Tax Credits Applied:</span>
+                                <span className="text-green-600">-{parseFloat(taxCalculator.taxCredits || "0").toLocaleString('en-PK')} PKR</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between border-t pt-2">
+                              <span className="text-sm font-medium">Net Income After Tax:</span>
+                              <span className="font-bold text-green-600">{(parseFloat(taxCalculator.annualIncome || "0") - taxResult.taxAmount).toLocaleString('en-PK')} PKR</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-sm text-muted-foreground">Effective Tax Rate:</span>
+                              <span className="font-semibold">{taxResult.effectiveRate.toFixed(2)}%</span>
+                            </div>
+                            <div className="mt-4 pt-4 border-t">
+                              <p className="text-sm font-semibold mb-2">Tax Breakdown by Bracket:</p>
+                              <div className="space-y-2 max-h-48 overflow-y-auto">
+                                {taxResult.breakdown.map((item, index) => (
+                                  <div key={index} className="text-xs bg-white/50 p-2 rounded">
+                                    <div className="flex justify-between">
+                                      <span className="font-medium">{item.bracket}</span>
+                                      <span>{item.rate}%</span>
+                                    </div>
+                                    <div className="flex justify-between text-muted-foreground mt-1">
+                                      <span>Amount: {item.amount.toLocaleString('en-PK')} PKR</span>
+                                      <span>Tax: {item.tax.toLocaleString('en-PK')} PKR</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                          <p className="text-muted-foreground text-center px-4">
+                            Enter your income details and click "Calculate Tax" to see results
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </TabsContent>

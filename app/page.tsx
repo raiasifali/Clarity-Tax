@@ -207,7 +207,7 @@ export default function Home() {
           <div className="container relative z-20 flex items-center justify-center min-h-[600px] py-20">
             <div className="max-w-3xl text-white text-center">
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl drop-shadow-lg">
-                ProcountSolutions Pvt Limited
+                Procount Solutions Pvt Limited
               </h1>
               <p className="mt-6 text-xl leading-relaxed drop-shadow-md max-w-2xl mx-auto">
                 Trusted accounting and consultancy company providing end-to-end financial and compliance solutions to businesses in Pakistan, the Gulf region, and Europe.

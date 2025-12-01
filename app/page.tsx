@@ -195,35 +195,27 @@ export default function Home() {
       </header>
       <main className="flex-1">
         {/* Hero Section */}
-        <section id="home" className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70 z-10" />
-          <div className="relative h-[600px]">
-            <Image
-              src="/placeholder.svg?height=600&width=1200"
-              alt="ProcountSolutions - Professional Accounting and Tax Services"
-              fill
-              className="object-cover"
-              priority
-            />
+        <section id="home" className="relative overflow-hidden">
+          {/* Professional Gradient Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900">
+            {/* Pattern Overlay */}
+            <div className="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMSI+PHBhdGggZD0iTTM2IDM0di00aC0ydjRoLTR2Mmg0djRoMnYtNGg0di0yaC00em0wLTMwVjBoLTJ2NGgtNHYyaDR2NGgyVjZoNHYtMmgtNHpNNiAzNHYtNEg0djRIMHYyaDR2NGgydi00aDR2LTJINnpNNiA0VjBINHY0SDB2Mmg0djRoMlY2aDRWNEg2eiIvPjwvZz48L2c+PC9zdmc+')]"></div>
+            {/* Geometric Shapes */}
+            <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl"></div>
           </div>
-          <div className="container absolute inset-0 z-20 flex items-center">
-            <div className="max-w-2xl text-white">
-              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+          <div className="container relative z-20 flex items-center justify-center min-h-[600px] py-20">
+            <div className="max-w-3xl text-white text-center">
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl drop-shadow-lg">
                 ProcountSolutions Pvt Limited
               </h1>
-              <p className="mt-4 text-xl font-semibold">
-                CEO: Hamza Riaz
-              </p>
-              <p className="mt-6 text-xl">
+              <p className="mt-6 text-xl leading-relaxed drop-shadow-md max-w-2xl mx-auto">
                 Trusted accounting and consultancy company providing end-to-end financial and compliance solutions to businesses in Pakistan, the Gulf region, and Europe.
               </p>
-              <div className="mt-10 flex gap-4">
-                <Button size="lg" className="bg-white text-primary hover:bg-gray-100" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
+              <div className="mt-10 flex justify-center gap-4">
+                <Button size="lg" className="bg-white text-primary hover:bg-gray-100 shadow-lg" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
                   Request a Call Back
                 </Button>
-                {/* <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10" onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}>
-                  Explore Services
-                </Button> */}
               </div>
             </div>
           </div>
@@ -579,13 +571,35 @@ export default function Home() {
                   Get in Touch
                 </Button>
               </div>
-              <div className="relative h-[400px] rounded-lg overflow-hidden">
-                <Image
-                  src="/placeholder.svg?height=400&width=600"
-                  alt="ProcountSolutions team"
-                  fill
-                  className="object-cover"
-                />
+              <div className="relative h-[400px] rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-2 border-blue-100">
+                {/* Professional Design Elements */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center p-8">
+                    {/* Icon/Logo Area */}
+                    <div className="mb-6 flex justify-center">
+                      <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg">
+                        <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                      </div>
+                    </div>
+                    {/* Decorative Elements */}
+                    <div className="space-y-2">
+                      <div className="flex justify-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                        <div className="w-2 h-2 rounded-full bg-indigo-400"></div>
+                        <div className="w-2 h-2 rounded-full bg-purple-400"></div>
+                      </div>
+                      <p className="text-sm font-semibold text-gray-700 mt-4">Professional Services</p>
+                      <p className="text-xs text-gray-500">Trusted Accounting Solutions</p>
+                    </div>
+                  </div>
+                </div>
+                {/* Decorative Background Shapes */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/30 rounded-full blur-2xl"></div>
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-200/30 rounded-full blur-2xl"></div>
+                {/* Grid Pattern */}
+                <div className="absolute inset-0 opacity-5 bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:20px_20px]"></div>
               </div>
             </div>
           </div>
@@ -640,144 +654,33 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="bg-gray-900 text-white py-8">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-xl font-bold text-primary">Procount</span>
-                <span className="text-xl font-bold">Solutions</span>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-2xl font-bold text-primary">Procount</span>
+                <span className="text-2xl font-bold">Solutions</span>
               </div>
-              <p className="text-gray-400 mb-4">
+              <p className="text-gray-400 text-sm">
                 Professional accounting and consultancy services for businesses in Pakistan, Gulf region, and Europe.
               </p>
-              <div className="flex space-x-4">
-                <Link href="#" className="text-gray-400 hover:text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                  </svg>
-                </Link>
-                <Link href="#" className="text-gray-400 hover:text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                  </svg>
-                </Link>
-                <Link href="#" className="text-gray-400 hover:text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-                  </svg>
-                </Link>
-                <Link href="#" className="text-gray-400 hover:text-white">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                    <rect width="4" height="12" x="2" y="9" />
-                    <circle cx="4" cy="4" r="2" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Services</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="#services" className="text-gray-400 hover:text-white">
-                    Compliance & Legal Registrations
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#services" className="text-gray-400 hover:text-white">
-                    Taxation Services
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#services" className="text-gray-400 hover:text-white">
-                    Accounting & Bookkeeping
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#services" className="text-gray-400 hover:text-white">
-                    Business Advisory
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#services" className="text-gray-400 hover:text-white">
-                    Financial Advisory
-                  </Link>
-                </li>
-              </ul>
             </div>
             <div>
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link href="#home" className="text-gray-400 hover:text-white">
+                  <Link href="#home" className="text-gray-400 hover:text-white text-sm">
                     Home
                   </Link>
                 </li>
                 <li>
-                  <Link href="#services" className="text-gray-400 hover:text-white">
-                    Services
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#principles" className="text-gray-400 hover:text-white">
-                    Principles
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#calculator" className="text-gray-400 hover:text-white">
-                    Calculator
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#about" className="text-gray-400 hover:text-white">
+                  <Link href="#about" className="text-gray-400 hover:text-white text-sm">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link href="#contact" className="text-gray-400 hover:text-white">
+                  <Link href="#contact" className="text-gray-400 hover:text-white text-sm">
                     Contact
                   </Link>
                 </li>
@@ -785,31 +688,32 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-lg font-semibold mb-4">Contact Us</h3>
-              <ul className="space-y-2">
-                <li className="flex items-start gap-3">
-                  <Phone className="text-gray-400 mt-0.5 h-5 w-5" />
-                  <a href="tel:03174121900" className="text-gray-400 hover:text-white">
+              <ul className="space-y-3">
+                <li className="flex items-center gap-3">
+                  <Phone className="text-primary h-4 w-4" />
+                  <a href="tel:03174121900" className="text-gray-400 hover:text-white text-sm">
                     03174121900
                   </a>
                 </li>
-                <li className="flex items-start gap-3">
-                  <Mail className="text-gray-400 mt-0.5 h-5 w-5" />
-                  <a href="mailto:info@procountSolutions.com" className="text-gray-400 hover:text-white break-all">
+                <li className="flex items-center gap-3">
+                  <Mail className="text-primary h-4 w-4" />
+                  <a href="mailto:info@procountSolutions.com" className="text-gray-400 hover:text-white text-sm break-all">
                     info@procountSolutions.com
                   </a>
                 </li>
-                <li className="flex items-start gap-3">
-                  <MapPin className="text-gray-400 mt-0.5 h-5 w-5" />
-                  <span className="text-gray-400">
+                <li className="flex items-center gap-3">
+                  <MapPin className="text-primary h-4 w-4" />
+                  <span className="text-gray-400 text-sm">
                     Lahore, Pakistan
                   </span>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} ProcountSolutions Pvt Limited. All rights reserved.</p>
-            <p className="mt-2">CEO: Hamza Riaz</p>
+          <div className="border-t border-gray-800 pt-6 text-center">
+            <p className="text-gray-400 text-sm">
+              &copy; {new Date().getFullYear()} ProcountSolutions Pvt Limited. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
